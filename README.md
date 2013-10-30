@@ -1,7 +1,9 @@
 # Passport-Mercadolibre
 
 [Passport](https://github.com/jaredhanson/passport) strategy for authenticating
-with [Mercadolibre](http://wordpress.com) using the OAuth 2.0 API.
+with [Mercadolibre](http://www.mercadolibre.com) using the OAuth 2.0 API.
+
+Learn more about MercadoLibre OAuth schema [here](http://developers.mercadolibre.com/server-side/).
 
 ## Install
 
@@ -16,7 +18,7 @@ account and OAuth 2.0 tokens.  The strategy requires a `verify` callback, which
 accepts these credentials and calls `done` providing a user, as well as
 `options` specifying a client ID, client secret, and callback URL.
 
-You can obtain the client ID and secret [here](http://applications.mercadolibre.com.ar/list).
+You can obtain the client ID and secret by creating an MercadoLibre app [here](http://applications.mercadolibre.com.ar/list).
     
     var MercadoLibreStrategy = require('passport-mercadolibre').Strategy;
 
@@ -37,20 +39,20 @@ The OAuth2 Module (0.9.5), which is a dependency, automatically adds a 'type=web
 
 To do this, you need to comment the following line in the *node_modules\passport-oauth\node_modules\oauth\lib\auth2.js* file:
 
-  exports.OAuth2.prototype.getOAuthAccessToken= function(code, params, callback) {
-    var params= params || {};
-    params['client_id'] = this._clientId;
-    params['client_secret'] = this._clientSecret;
+    exports.OAuth2.prototype.getOAuthAccessToken= function(code, params, callback) {
+      var params= params || {};
+      params['client_id'] = this._clientId;
+      params['client_secret'] = this._clientSecret;
 
-    // THIS ONE
-    //params['type']= 'web_server';
-    //
+      // THIS ONE
+      //params['type']= 'web_server';
+      //
 
-    var codeParam = (params.grant_type === 'refresh_token') ? 'refresh_token' : 'code';
-    params[codeParam]= code;
+      var codeParam = (params.grant_type === 'refresh_token') ? 'refresh_token' : 'code';
+      params[codeParam]= code;
 
-    ...
-  }
+      ...
+    }
 
 
 #### Authenticate Requests
@@ -70,6 +72,19 @@ application:
         // Successful authentication, redirect home.
         res.redirect('/');
       });
+
+    app.get('/', ensureAuthenticated, 
+      function(req, res) {
+        res.send("Logged in user: " + req.user);
+      }
+    );
+
+    function ensureAuthenticated(req, res, next) {
+      if (req.isAuthenticated()) { 
+        return next(); 
+      };
+      res.redirect('/auth/mercadolibre')
+    };
 
 ## License
 
