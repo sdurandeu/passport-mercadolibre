@@ -14,21 +14,22 @@ The OAuth2 Module (0.9.5), which is a dependency, automatically adds a 'type=web
 
 To do this, you need to comment the following line in the *node_modules\passport-oauth\node_modules\oauth\lib\auth2.js* file:
 
-    exports.OAuth2.prototype.getOAuthAccessToken= function(code, params, callback) {
-      var params= params || {};
-      params['client_id'] = this._clientId;
-      params['client_secret'] = this._clientSecret;
+```javascript
+exports.OAuth2.prototype.getOAuthAccessToken= function(code, params, callback) {
+  var params= params || {};
+  params['client_id'] = this._clientId;
+  params['client_secret'] = this._clientSecret;
 
-      // ------- COMMENT THIS LINE--------------
-      // params['type']= 'web_server';
-      // ---------------------------------------
+  // ------- COMMENT THIS LINE--------------
+  // params['type']= 'web_server';
+  // ---------------------------------------
 
-      var codeParam = (params.grant_type === 'refresh_token') ? 'refresh_token' : 'code';
-      params[codeParam]= code;
+  var codeParam = (params.grant_type === 'refresh_token') ? 'refresh_token' : 'code';
+  params[codeParam]= code;
 
-      ...
-    }
-
+  ...
+}
+```
 
 ## Configuration
 
@@ -91,7 +92,7 @@ function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) { 
     return next(); 
   };
-  res.redirect('/auth/mercadolibre')
+  res.redirect('/auth/mercadolibre');
 };
 ```
 
@@ -103,8 +104,8 @@ The properties available in the `user` object are:
 - accessToken
 
 But you can get more accessing the raw user profile as provided by mercadolibre:
-- _raw _-> raw server response_
-- _json _-> JSON object with server response_
+- _raw  _ --> raw server response_
+- _json _ --> JSON object with server response_
 
 
 > **Note:** Please notice that the module internally sets up the HTTPS module for using SSL v3 as shown below:
