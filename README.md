@@ -1,17 +1,36 @@
 # Passport-Mercadolibre
 
-[Passport](https://github.com/jaredhanson/passport) strategy for authenticating
-with [Mercadolibre](http://www.mercadolibre.com) using the OAuth 2.0 API.
+[Passport](https://github.com/jaredhanson/passport) strategy for authenticating with [Mercadolibre](http://www.mercadolibre.com) using the OAuth 2.0 API.
 
 Learn more about MercadoLibre OAuth schema [here](http://developers.mercadolibre.com/server-side/).
 
-## Install
+## Installation
 
     $ npm install passport-mercadolibre
 
-## Usage
+#### WARNING
 
-#### Configure Strategy
+The OAuth2 Module (0.9.5), which is a dependency, automatically adds a 'type=web_server' parameter to the query portion of the URL. This extra parameters, is currently not supported by MercadoLibre authentication server, and thus should be commented for the module to work. 
+
+To do this, you need to comment the following line in the *node_modules\passport-oauth\node_modules\oauth\lib\auth2.js* file:
+
+    exports.OAuth2.prototype.getOAuthAccessToken= function(code, params, callback) {
+      var params= params || {};
+      params['client_id'] = this._clientId;
+      params['client_secret'] = this._clientSecret;
+
+      // ------- COMMENT THIS LINE--------------
+      // params['type']= 'web_server';
+      // ---------------------------------------
+
+      var codeParam = (params.grant_type === 'refresh_token') ? 'refresh_token' : 'code';
+      params[codeParam]= code;
+
+      ...
+    }
+
+
+## Configuration
 
 The Mercadolibre authentication strategy authenticates users using a Mercadolibre
 account and OAuth 2.0 tokens.  The strategy requires a `verify` callback, which
@@ -23,39 +42,25 @@ You can obtain the client ID and secret by creating an MercadoLibre app [here](h
     var MercadoLibreStrategy = require('passport-mercadolibre').Strategy;
 
     passport.use(new MercadoLibreStrategy({
-        clientID: CLIENT_ID,
-        clientSecret: CLIENT_SECRET
+        clientID: 'YOUR_CLIENT_ID',
+        clientSecret: 'YOUR_CLIENT_SECRET',
+        callbackURL: 'http://www.example.com/auth/mercadolibre/callback',
       },
-      function(accessToken, refreshToken, profile, done) {
-        User.findOrCreate({ WordpressId: profile.id }, function (err, user) {
-          return done(err, user);
-        });
+      function (accessToken, refreshToken, profile, done) {
+        // + store/retrieve user from database, together with access token and refresh token
+        return done(null, profile); 
       }
     ));
 
-#### WARNING
+  passport.serializeUser(function (user, done) {
+    done(null, user);
+  });
 
-The OAuth2 Module (0.9.5), which is a dependency, automatically adds a 'type=web_server' parameter to the query portion of the URL. This is a bug and that line should be commented out for the module to work. 
+  passport.deserializeUser(function (user, done) {
+    done(null, user);
+  });
 
-To do this, you need to comment the following line in the *node_modules\passport-oauth\node_modules\oauth\lib\auth2.js* file:
-
-    exports.OAuth2.prototype.getOAuthAccessToken= function(code, params, callback) {
-      var params= params || {};
-      params['client_id'] = this._clientId;
-      params['client_secret'] = this._clientSecret;
-
-      // THIS ONE
-      //params['type']= 'web_server';
-      //
-
-      var codeParam = (params.grant_type === 'refresh_token') ? 'refresh_token' : 'code';
-      params[codeParam]= code;
-
-      ...
-    }
-
-
-#### Authenticate Requests
+## Usage
 
 Use `passport.authorize()`, specifying the `'mercadolibre'` strategy, to
 authenticate requests.
@@ -75,7 +80,7 @@ application:
 
     app.get('/', ensureAuthenticated, 
       function(req, res) {
-        res.send("Logged in user: " + req.user);
+        res.send("Logged in user: " + req.user.nickname);
       }
     );
 
@@ -85,6 +90,22 @@ application:
       };
       res.redirect('/auth/mercadolibre')
     };
+
+The properties available in the user object are:
+- nickname
+- first_name
+- last_name
+- email
+- accessToken
+
+But you can get more accessing the raw user profile as provided by mercadolibre:
+- _raw - raw server response
+- _json - JSON object with server response
+
+
+> Note: Please notice that the module internally sets up the HTTPS module for using SSL v3 as shown below:
+>
+>   https.globalAgent.options.secureProtocol = 'SSLv3_method';
 
 ## License
 
