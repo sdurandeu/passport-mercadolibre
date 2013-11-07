@@ -97,13 +97,14 @@ function ensureAuthenticated(req, res, next) {
 ```
 
 The properties available in the `user` object are:
+- provider _--> mercadolibre_ 
 - nickname
 - first_name
 - last_name
 - email
 - accessToken
 
-But you can get more accessing the raw user profile as provided by mercadolibre:
+But you can get more information (a lot more!) accessing the raw user profile as provided by mercadolibre:
 - \_raw  _--> raw server response_
 - \_json _--> JSON object with server response_
 
