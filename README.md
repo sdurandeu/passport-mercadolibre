@@ -105,7 +105,7 @@ The properties available in the `user` object are:
 
 But you can get more accessing the raw user profile as provided by mercadolibre:
 - \_raw  _--> raw server response_
-- \_json _ --> JSON object with server response_
+- \_json _--> JSON object with server response_
 
 
 > **Note:** Please notice that the module internally sets up the HTTPS module for using SSL v3 as shown below:
