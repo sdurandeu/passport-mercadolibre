@@ -38,19 +38,20 @@ accepts these credentials and calls `done` providing a user, as well as
 `options` specifying a client ID, client secret, and callback URL.
 
 You can obtain the client ID and secret by creating an MercadoLibre app [here](http://applications.mercadolibre.com.ar/list).
-    
-    var MercadoLibreStrategy = require('passport-mercadolibre').Strategy;
 
-    passport.use(new MercadoLibreStrategy({
-        clientID: 'YOUR_CLIENT_ID',
-        clientSecret: 'YOUR_CLIENT_SECRET',
-        callbackURL: 'http://www.example.com/auth/mercadolibre/callback',
-      },
-      function (accessToken, refreshToken, profile, done) {
-        // + store/retrieve user from database, together with access token and refresh token
-        return done(null, profile); 
-      }
-    ));
+  ```javascript
+  var MercadoLibreStrategy = require('passport-mercadolibre').Strategy;
+
+  passport.use(new MercadoLibreStrategy({
+      clientID: 'YOUR_CLIENT_ID',
+      clientSecret: 'YOUR_CLIENT_SECRET',
+      callbackURL: 'http://www.example.com/auth/mercadolibre/callback',
+    },
+    function (accessToken, refreshToken, profile, done) {
+      // + store/retrieve user from database, together with access token and refresh token
+      return done(null, profile); 
+    }
+  ));
 
   passport.serializeUser(function (user, done) {
     done(null, user);
@@ -59,6 +60,7 @@ You can obtain the client ID and secret by creating an MercadoLibre app [here](h
   passport.deserializeUser(function (user, done) {
     done(null, user);
   });
+  ```
 
 ## Usage
 
@@ -68,30 +70,32 @@ authenticate requests.
 For example, as route middleware in an [Express](http://expressjs.com/)
 application:
 
-    app.get('/auth/mercadolibre',
-      passport.authorize('mercadolibre'));
+  ```javascript
+  app.get('/auth/mercadolibre',
+    passport.authorize('mercadolibre'));
 
-    app.get('/auth/mercadolibre/callback', 
-      passport.authorize('mercadolibre', { failureRedirect: '/login' }),
-      function(req, res) {
-        // Successful authentication, redirect home.
-        res.redirect('/');
-      });
+  app.get('/auth/mercadolibre/callback', 
+    passport.authorize('mercadolibre', { failureRedirect: '/login' }),
+    function(req, res) {
+      // Successful authentication, redirect home.
+      res.redirect('/');
+    });
 
-    app.get('/', ensureAuthenticated, 
-      function(req, res) {
-        res.send("Logged in user: " + req.user.nickname);
-      }
-    );
+  app.get('/', ensureAuthenticated, 
+    function(req, res) {
+      res.send("Logged in user: " + req.user.nickname);
+    }
+  );
 
-    function ensureAuthenticated(req, res, next) {
-      if (req.isAuthenticated()) { 
-        return next(); 
-      };
-      res.redirect('/auth/mercadolibre')
+  function ensureAuthenticated(req, res, next) {
+    if (req.isAuthenticated()) { 
+      return next(); 
     };
+    res.redirect('/auth/mercadolibre')
+  };
+  ```
 
-The properties available in the user object are:
+The properties available in the `user` object are:
 - nickname
 - first_name
 - last_name
@@ -99,13 +103,12 @@ The properties available in the user object are:
 - accessToken
 
 But you can get more accessing the raw user profile as provided by mercadolibre:
-- _raw - raw server response
-- _json - JSON object with server response
+- _raw -> raw server response
+- _json -> JSON object with server response
 
 
 > Note: Please notice that the module internally sets up the HTTPS module for using SSL v3 as shown below:
->
->   https.globalAgent.options.secureProtocol = 'SSLv3_method';
+> `https.globalAgent.options.secureProtocol = 'SSLv3_method';`
 
 ## License
 
