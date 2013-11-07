@@ -1,6 +1,6 @@
 # Passport-Mercadolibre
 
-[Passport](https://github.com/jaredhanson/passport) strategy for authenticating with [Mercadolibre](http://www.mercadolibre.com) using the OAuth 2.0 API.
+[Passport](https://github.com/jaredhanson/passport) strategy for authenticating with [MercadoLibre](http://www.mercadolibre.com) using the OAuth 2.0 API.
 
 Learn more about MercadoLibre OAuth schema [here](http://developers.mercadolibre.com/server-side/).
 
@@ -104,7 +104,7 @@ The properties available in the `user` object are:
 - email
 - accessToken
 
-But you can get more information (a lot more!) accessing the raw user profile as provided by mercadolibre:
+But you can get more information (a lot more!) accessing the raw user profile as provided by MercadoLibre:
 - \_raw  _--> raw server response_
 - \_json _--> JSON object with server response_
 
