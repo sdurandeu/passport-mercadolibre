@@ -8,29 +8,6 @@ Learn more about MercadoLibre OAuth schema [here](http://developers.mercadolibre
 
     $ npm install passport-mercadolibre
 
-#### WARNING
-
-The OAuth2 Module (0.9.5), which is a dependency, automatically adds a 'type=web_server' parameter to the query portion of the URL. This extra parameters, is currently not supported by MercadoLibre authentication server, and thus should be commented for the module to work. 
-
-To do this, you need to comment the following line in the *node_modules\passport-oauth\node_modules\oauth\lib\auth2.js* file:
-
-```javascript
-exports.OAuth2.prototype.getOAuthAccessToken= function(code, params, callback) {
-  var params= params || {};
-  params['client_id'] = this._clientId;
-  params['client_secret'] = this._clientSecret;
-
-  // ------- COMMENT THIS LINE--------------
-  // params['type']= 'web_server';
-  // ---------------------------------------
-
-  var codeParam = (params.grant_type === 'refresh_token') ? 'refresh_token' : 'code';
-  params[codeParam]= code;
-
-  ...
-}
-```
-
 ## Configuration
 
 The Mercadolibre authentication strategy authenticates users using a Mercadolibre
