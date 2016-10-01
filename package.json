@@ -1,6 +1,6 @@
 {
   "name": "passport-mercadolibre",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "MercadoLibre OAuth2 strategy for Passport.",
   "main": "./lib/index.js",
   "dependencies": {
