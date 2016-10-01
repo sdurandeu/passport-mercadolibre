@@ -27,7 +27,7 @@ passport.use(new MercadoLibreStrategy({
   },
   function (accessToken, refreshToken, profile, done) {
     // + store/retrieve user from database, together with access token and refresh token
-    return done(null, profile); 
+    return done(null, profile);
   }
 ));
 
@@ -52,29 +52,29 @@ application:
 app.get('/auth/mercadolibre',
   passport.authorize('mercadolibre'));
 
-app.get('/auth/mercadolibre/callback', 
+app.get('/auth/mercadolibre/callback',
   passport.authorize('mercadolibre', { failureRedirect: '/login' }),
   function(req, res) {
     // Successful authentication, redirect home.
     res.redirect('/');
   });
 
-app.get('/', ensureAuthenticated, 
+app.get('/', ensureAuthenticated,
   function(req, res) {
     res.send("Logged in user: " + req.user.nickname);
   }
 );
 
 function ensureAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) { 
-    return next(); 
+  if (req.isAuthenticated()) {
+    return next();
   };
   res.redirect('/auth/mercadolibre');
 };
 ```
 
 The properties available in the `user` object are:
-- provider _--> mercadolibre_ 
+- provider _--> mercadolibre_
 - nickname
 - first_name
 - last_name
@@ -84,11 +84,6 @@ The properties available in the `user` object are:
 But you can get more information (a lot more!) accessing the raw user profile as provided by MercadoLibre:
 - \_raw  _--> raw server response_
 - \_json _--> JSON object with server response_
-
-
-> **Note:** Please notice that the module internally sets up the HTTPS module for using SSL v3 as shown below:
->
-> `https.globalAgent.options.secureProtocol = 'SSLv3_method';`
 
 ## License
 
